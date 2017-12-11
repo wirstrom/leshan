@@ -34,26 +34,20 @@ import org.eclipse.californium.core.coap.CoAP.Code;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.coap.Response;
 import org.eclipse.californium.core.network.CoapEndpoint;
-import org.eclipse.californium.core.network.Endpoint;
 import org.eclipse.californium.elements.AddressEndpointContext;
 import org.eclipse.leshan.Link;
 import org.eclipse.leshan.ResponseCode;
-import org.eclipse.leshan.client.californium.LeshanClient;
 import org.eclipse.leshan.client.californium.LeshanClientBuilder;
-import org.eclipse.leshan.client.californium.impl.CaliforniumLwM2mRequestSender;
 import org.eclipse.leshan.client.resource.LwM2mInstanceEnabler;
 import org.eclipse.leshan.client.resource.LwM2mObjectEnabler;
 import org.eclipse.leshan.client.resource.ObjectEnabler;
 import org.eclipse.leshan.core.node.LwM2mPath;
 import org.eclipse.leshan.core.observation.Observation;
 import org.eclipse.leshan.core.request.ContentFormat;
-import org.eclipse.leshan.core.request.DeregisterRequest;
 import org.eclipse.leshan.core.request.ObserveRequest;
 import org.eclipse.leshan.core.request.ReadRequest;
-import org.eclipse.leshan.core.request.RegisterRequest;
 import org.eclipse.leshan.core.response.ObserveResponse;
 import org.eclipse.leshan.core.response.ReadResponse;
-import org.eclipse.leshan.core.response.RegisterResponse;
 import org.eclipse.leshan.server.registration.Registration;
 import org.eclipse.leshan.server.security.NonUniqueSecurityInfoException;
 import org.junit.After;
@@ -255,37 +249,25 @@ public class RegistrationTest {
 
     @Test
     public void register_with_additional_attributes() throws InterruptedException {
-        // Check registration
-        helper.assertClientNotRegisterered();
-
-        // HACK to be able to send a Registration request with additional attributes
-        LeshanClient lclient = helper.client;
-        lclient.getCoapServer().start();
-        Endpoint secureEndpoint = lclient.getCoapServer().getEndpoint(lclient.getSecuredAddress());
-        Endpoint nonSecureEndpoint = lclient.getCoapServer().getEndpoint(lclient.getUnsecuredAddress());
-        CaliforniumLwM2mRequestSender sender = new CaliforniumLwM2mRequestSender(secureEndpoint, nonSecureEndpoint);
-
-        // Create Request with additional attributes
+        // Create client with additional attributes
         Map<String, String> additionalAttributes = new HashMap<>();
         additionalAttributes.put("key1", "value1");
         additionalAttributes.put("imei", "2136872368");
-        Link[] objectLinks = Link.parse("</>;rt=\"oma.lwm2m\",</1/0>,</2>,</3/0>".getBytes());
-        RegisterRequest registerRequest = new RegisterRequest(helper.getCurrentEndpoint(), null, null, null, null,
-                objectLinks, additionalAttributes);
+        helper.createClient(additionalAttributes);
 
-        // Send request
-        RegisterResponse resp = sender.send(helper.server.getUnsecuredAddress(), false, registerRequest, 5000l);
+        // Check registration
+        helper.assertClientNotRegisterered();
+
+        // Start it and wait for registration
+        helper.client.start();
         helper.waitForRegistration(1);
 
         // Check we are registered with the expected attributes
         helper.assertClientRegisterered();
         assertNotNull(helper.last_registration);
         assertEquals(additionalAttributes, helper.last_registration.getAdditionalRegistrationAttributes());
-        assertArrayEquals(Link.parse("</>;rt=\"oma.lwm2m\",</1/0>,</2>,</3/0>".getBytes()),
+        assertArrayEquals(Link.parse("</>;rt=\"oma.lwm2m\",</1/0>,</2>,</3/0>,</2000/0>".getBytes()),
                 helper.getCurrentRegistration().getObjectLinks());
-
-        sender.send(helper.server.getUnsecuredAddress(), false, new DeregisterRequest(resp.getRegistrationID()), 5000l);
-        lclient.getCoapServer().stop();
     }
 
     @Test

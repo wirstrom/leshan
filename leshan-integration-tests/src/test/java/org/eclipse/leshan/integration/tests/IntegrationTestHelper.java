@@ -22,6 +22,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -118,6 +119,10 @@ public class IntegrationTestHelper {
     }
 
     public void createClient() {
+        createClient(null);
+    }
+
+    public void createClient(Map<String, String> additionalAttributes) {
         // Create objects Enabler
         ObjectsInitializer initializer = new ObjectsInitializer(new LwM2mModel(createObjectModels()));
         initializer.setInstancesForObject(LwM2mId.SECURITY, Security.noSec(
@@ -139,6 +144,7 @@ public class IntegrationTestHelper {
 
         // Build Client
         LeshanClientBuilder builder = new LeshanClientBuilder(currentEndpointIdentifier.get());
+        builder.setAdditionalAttributes(additionalAttributes);
         builder.setObjects(objects);
         client = builder.build();
     }

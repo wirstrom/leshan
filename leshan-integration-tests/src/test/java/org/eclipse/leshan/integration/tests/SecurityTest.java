@@ -114,7 +114,7 @@ public class SecurityTest {
         helper.server.send(helper.getCurrentRegistration(), new ReadRequest(3, 0, 1));
 
         // Get the previous address and stop client silently (no deregistration)
-        InetSocketAddress securedAddress = helper.client.getSecuredAddress();
+        InetSocketAddress address = helper.client.getAddress();
         helper.client.destroy(false);
         helper.client = null;
 
@@ -123,7 +123,7 @@ public class SecurityTest {
 
         // Create a new connector for the same address/port and start a new DTLS handshake
         Builder builder = new DtlsConnectorConfig.Builder();
-        builder.setAddress(securedAddress);
+        builder.setAddress(address);
         builder.setPskStore(new StaticPskStore("anotherPSK", GOOD_PSK_KEY));
         DTLSConnector dtlsConnector = new DTLSConnector(builder.build());
         dtlsConnector.start();

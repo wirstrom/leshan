@@ -35,8 +35,8 @@ import org.eclipse.californium.core.coap.OptionSet;
 import org.eclipse.californium.core.coap.Response;
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.core.network.serialization.UdpDataSerializer;
-import org.eclipse.californium.elements.Connector;
 import org.eclipse.californium.elements.AddressEndpointContext;
+import org.eclipse.californium.elements.Connector;
 import org.eclipse.californium.elements.EndpointContext;
 import org.eclipse.californium.elements.RawData;
 import org.eclipse.leshan.ResponseCode;
@@ -372,7 +372,8 @@ public class ObserveTest {
         OptionSet options = new OptionSet().setContentFormat(contentFormat)
                 .setObserve(firstCoapResponse.getOptions().getObserve() + 1);
         response.setOptions(options);
-        EndpointContext context = new AddressEndpointContext(helper.server.getUnsecuredAddress().getAddress(), helper.server.getUnsecuredAddress().getPort());
+        EndpointContext context = new AddressEndpointContext(helper.server.getUnsecuredAddress().getAddress(),
+                helper.server.getUnsecuredAddress().getPort());
         response.setDestinationContext(context);
 
         // serialize response
@@ -384,8 +385,7 @@ public class ObserveTest {
     }
 
     private Connector getConnector(LeshanClient client) {
-        CoapEndpoint endpoint = (CoapEndpoint) helper.client.getCoapServer()
-                .getEndpoint(helper.client.getUnsecuredAddress());
+        CoapEndpoint endpoint = (CoapEndpoint) helper.client.getCoapServer().getEndpoint(helper.client.getAddress());
         return endpoint.getConnector();
     }
 

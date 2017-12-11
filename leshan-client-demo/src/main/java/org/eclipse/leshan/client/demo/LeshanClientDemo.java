@@ -251,17 +251,8 @@ public class LeshanClientDemo {
         // Create client
         LeshanClientBuilder builder = new LeshanClientBuilder(endpoint);
         builder.setLocalAddress(localAddress, localPort);
-        builder.setLocalSecureAddress(secureLocalAddress, secureLocalPort);
         builder.setObjects(enablers);
         builder.setCoapConfig(coapConfig);
-        // if we don't use bootstrap, client will always use the same unique endpoint
-        // so we can disable the other one.
-        if (!needBootstrap) {
-            if (pskIdentity == null)
-                builder.disableSecuredEndpoint();
-            else
-                builder.disableUnsecuredEndpoint();
-        }
         final LeshanClient client = builder.build();
 
         LOG.info("Press 'w','a','s','d' to change reported Location ({},{}).", locationInstance.getLatitude(),
