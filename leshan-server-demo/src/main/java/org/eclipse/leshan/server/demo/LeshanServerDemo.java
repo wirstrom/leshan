@@ -1,19 +1,19 @@
 /*******************************************************************************
  * Copyright (c) 2013-2015 Sierra Wireless and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * and Eclipse Distribution License v1.0 which accompany this distribution.
- * 
+ *
  * The Eclipse Public License is available at
  *    http://www.eclipse.org/legal/epl-v10.html
  * and the Eclipse Distribution License is available at
  *    http://www.eclipse.org/org/documents/edl-v10.html.
- * 
+ *
  * Contributors:
  *     Sierra Wireless - initial API and implementation
  *     Bosch Software Innovations - added Redis URL support with authentication
- *     Firis SA - added mDNS services registering 
+ *     Firis SA - added mDNS services registering
  *******************************************************************************/
 package org.eclipse.leshan.server.demo;
 
@@ -248,6 +248,11 @@ public class LeshanServerDemo {
             coapConfig = LeshanServerBuilder.createDefaultNetworkConfig();
             coapConfig.store(configFile);
         }
+        System.out.println("Test");
+        coapConfig.setInt(NetworkConfig.Keys.ACK_TIMEOUT, 20000); // in ms
+        coapConfig.setFloat(NetworkConfig.Keys.ACK_RANDOM_FACTOR, 1.5f);
+        coapConfig.setFloat(NetworkConfig.Keys.ACK_TIMEOUT_SCALE, 2f);
+        coapConfig.setInt(NetworkConfig.Keys.MAX_RETRANSMIT, 4);
         builder.setCoapConfig(coapConfig);
 
         // connect to redis if needed
