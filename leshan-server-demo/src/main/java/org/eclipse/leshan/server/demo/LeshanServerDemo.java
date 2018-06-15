@@ -248,7 +248,7 @@ public class LeshanServerDemo {
             coapConfig = LeshanServerBuilder.createDefaultNetworkConfig();
             coapConfig.store(configFile);
         }
-        System.out.println("Test");
+        
         coapConfig.setInt(NetworkConfig.Keys.ACK_TIMEOUT, 20000); // in ms
         coapConfig.setFloat(NetworkConfig.Keys.ACK_RANDOM_FACTOR, 1.5f);
         coapConfig.setFloat(NetworkConfig.Keys.ACK_TIMEOUT_SCALE, 2f);
